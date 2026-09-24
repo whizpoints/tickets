@@ -13,7 +13,7 @@ export default async function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
-              <img src="/images.jpg" alt="FlashPass Logo" className="h-7 w-7 rounded" />
+              <img src="/logo.png" alt="FlashPass Logo" className="h-7 w-7 rounded" />
               <span className="font-bold text-xl text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">
                 FlashPass
               </span>

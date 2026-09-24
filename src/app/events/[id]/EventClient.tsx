@@ -133,7 +133,7 @@ export default function EventClient({ event, packages, session }: EventClientPro
           </div>
           <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-medium text-sm">
             <Clock className="w-4 h-4" />
-            <span>{event.start_time || "8:00 PM"} - {event.end_time || "4:00 AM"}</span>
+            <span>{new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} Onwards</span>
           </div>
           <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-medium text-sm">
             <MapPin className="w-4 h-4" />
