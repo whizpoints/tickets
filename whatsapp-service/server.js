@@ -4,6 +4,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const QRCode = require('qrcode');
+const { usePostgresAuthState, pool } = require('./postgresAuthState');
 
 const {
   default: makeWASocket,
@@ -37,10 +38,17 @@ let botDevice = null;
 let cachedGroups = [];
 let activeGroupId = null;
 let startTime = Date.now();
-const settingsPath = path.join(__dirname, 'auth_info_baileys', 'settings.json');
-if (fs.existsSync(settingsPath)) {
-  try { activeGroupId = JSON.parse(fs.readFileSync(settingsPath)).activeGroupId; } catch(e){}
+
+// Restore active group from DB if using DB
+async function loadSettings() {
+  if (pool) {
+    try {
+      const res = await pool.query("SELECT data FROM whatsapp_auth WHERE id = 'settings'");
+      if (res.rows.length > 0) activeGroupId = JSON.parse(res.rows[0].data).activeGroupId;
+    } catch (e) {}
+  }
 }
+loadSettings();
 
 async function generateQRWithLogo(qrData) {
   try {
@@ -52,8 +60,18 @@ async function generateQRWithLogo(qrData) {
 }
 
 async function setupWhatsApp() {
-  const authFolder = path.join(__dirname, 'auth_info_baileys');
-  const { state, saveCreds } = await useMultiFileAuthState(authFolder);
+  let state, saveCreds;
+  if (pool) {
+    const auth = await usePostgresAuthState();
+    state = auth.state;
+    saveCreds = auth.saveCreds;
+  } else {
+    const authFolder = path.join(__dirname, 'auth_info_baileys');
+    const auth = await useMultiFileAuthState(authFolder);
+    state = auth.state;
+    saveCreds = auth.saveCreds;
+  }
+  
   const { version } = await fetchLatestBaileysVersion();
 
   sock = makeWASocket({
@@ -84,8 +102,11 @@ async function setupWhatsApp() {
       if (shouldReconnect) {
         setTimeout(setupWhatsApp, 3000);
       } else {
-        if (fs.existsSync(authFolder)) {
-          fs.rmSync(authFolder, { recursive: true, force: true });
+        if (pool) {
+          await pool.query("DELETE FROM whatsapp_auth WHERE id != 'settings'");
+        } else {
+          const authFolder = path.join(__dirname, 'auth_info_baileys');
+          if (fs.existsSync(authFolder)) fs.rmSync(authFolder, { recursive: true, force: true });
         }
         setupWhatsApp();
       }
@@ -102,7 +123,6 @@ async function setupWhatsApp() {
     }
   });
 
-  // Simple Ping Handler
   sock.ev.on('messages.upsert', async (m) => {
     if (m.type !== 'notify') return;
     const msg = m.messages[0];
@@ -137,7 +157,6 @@ app.get('/', (req, res) => {
     statusHTML = '<p style="color: red;">Disconnected. Reconnecting...</p>';
   }
 
-  // Auto-refresh the page every 3 seconds IF not connected
   const refreshScript = connectionState !== 'open' 
     ? '<script>setTimeout(() => window.location.reload(), 3000);</script>' 
     : '';
@@ -163,7 +182,6 @@ app.get('/', (req, res) => {
   `);
 });
 
-// API Endpoints
 app.get('/api/status', authenticateApiKey, (req, res) => {
   res.json({
     connectionState,
@@ -175,10 +193,15 @@ app.get('/api/status', authenticateApiKey, (req, res) => {
   });
 });
 
-app.post('/api/set-group', authenticateApiKey, (req, res) => {
+app.post('/api/set-group', authenticateApiKey, async (req, res) => {
   activeGroupId = req.body.groupId;
-  if (!fs.existsSync(path.join(__dirname, 'auth_info_baileys'))) fs.mkdirSync(path.join(__dirname, 'auth_info_baileys'), { recursive: true });
-  fs.writeFileSync(settingsPath, JSON.stringify({ activeGroupId }));
+  if (pool) {
+    await pool.query("INSERT INTO whatsapp_auth (id, data) VALUES ('settings', $1) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data", [JSON.stringify({ activeGroupId })]);
+  } else {
+    const settingsPath = path.join(__dirname, 'auth_info_baileys', 'settings.json');
+    if (!fs.existsSync(path.join(__dirname, 'auth_info_baileys'))) fs.mkdirSync(path.join(__dirname, 'auth_info_baileys'), { recursive: true });
+    fs.writeFileSync(settingsPath, JSON.stringify({ activeGroupId }));
+  }
   res.json({ success: true, activeGroupId });
 });
 
