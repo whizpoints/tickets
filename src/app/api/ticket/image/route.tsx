@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
               />
 
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                <img src={`${appUrl}/images.jpg`} style={{ width: '130px', height: '130px', borderRadius: '25px', objectFit: 'cover' }} />
+                <img src={`${appUrl}/logo.png`} style={{ width: '130px', height: '130px', borderRadius: '25px', objectFit: 'cover' }} />
               </div>
               <h1 style={{ fontSize: '46px', fontWeight: 800, color: '#111827', margin: '0 0 10px 0', lineHeight: 1.1 }}>
                 {event}

@@ -24,6 +24,7 @@ import {
   Shield
 } from "lucide-react";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
 
 // Dummy data for tickets
 const myTickets = [
@@ -32,7 +33,7 @@ const myTickets = [
   { id: "TKT-5531-C", event: "Startup Mixer", package: "Early Bird", date: "Dec 01, 2024" },
 ];
 
-export default function DashboardClient({ user, tickets, adminEvents = [] }: { user: any, tickets: any[], adminEvents?: any[] }) {
+export default function DashboardClient({ user, tickets, adminEvents = [], adminStats = {revenue:0, sold:0, active:0} }: { user: any, tickets: any[], adminEvents?: any[], adminStats?: any }) {
   const [isAdmin, setIsAdmin] = useState(user?.role === "ADMIN");
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const [waStatus, setWaStatus] = useState<any>({ isConnected: false, connectionState: "offline", qr: null, groups: [], activeGroupId: null });
@@ -83,15 +84,17 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
   };
 
   const handleDeleteEvent = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this event? This cannot be undone.")) return;
+    if (!window.confirm("Are you sure you want to delete this event? This cannot be undone.")) return;
+toast.loading("Deleting event...", { id: "del" });
     setIsDeleting(id);
     try {
       const { deleteEvent } = await import('@/actions/event');
       await deleteEvent(id);
+      toast.success("Deleted successfully", { id: "del" });
       window.location.reload();
     } catch (error) {
       console.error(error);
-      alert("Failed to delete event");
+      toast.error("Failed to delete event");
     } finally {
       setIsDeleting(null);
     }
@@ -200,7 +203,7 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900">KES 1.2M</p>
+                  <p className="text-2xl font-bold text-gray-900">KES {(adminStats?.revenue || 0).toLocaleString()}</p>
                 </div>
               </div>
               
@@ -210,7 +213,7 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Tickets Sold</p>
-                  <p className="text-2xl font-bold text-gray-900">845</p>
+                  <p className="text-2xl font-bold text-gray-900">{(adminStats?.sold || 0).toLocaleString()}</p>
                 </div>
               </div>
 
@@ -219,8 +222,8 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
                   <Users className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Scanned Attendees</p>
-                  <p className="text-2xl font-bold text-gray-900">412</p>
+                  <p className="text-sm font-medium text-gray-500">Active Users</p>
+                  <p className="text-2xl font-bold text-gray-900">{(adminStats?.active || 0).toLocaleString()}</p>
                 </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { updatePackage } from '@/actions/event';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import { ArrowLeft, Save } from 'lucide-react';
 
 export default function EditEventClient({ event, packages }: { event: any, packages: any[] }) {
@@ -17,14 +18,15 @@ export default function EditEventClient({ event, packages }: { event: any, packa
 
   const handleSave = async () => {
     setIsSaving(true);
+    toast.loading("Saving changes...", { id: "save" });
     try {
       for (const p of pkgs) {
         await updatePackage(p.id, p.capacity);
       }
-      alert('Updated successfully');
+      toast.success("Updated successfully", { id: "save" });
       router.push('/dashboard');
     } catch (e) {
-      alert('Failed to update');
+      toast.error("Failed to update", { id: "save" });
     }
     setIsSaving(false);
   };
