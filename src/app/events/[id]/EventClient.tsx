@@ -179,16 +179,29 @@ export default function EventClient({ event, packages, session }: EventClientPro
                 <div key={pkg.id} className="bg-white p-5 rounded-2xl border border-gray-200 hover:border-blue-500 hover:shadow-md transition group">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold text-lg">{pkg.name}</h3>
-                    <span className="font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded">
-                      KES {Number(pkg.price).toLocaleString()}
-                    </span>
+                    <div className="flex flex-col items-end">
+                      <span className="font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded">
+                        KES {Number(pkg.currentPrice || pkg.price).toLocaleString()}
+                      </span>
+                      {pkg.currentPrice > pkg.originalPrice && (
+                        <span className="text-xs text-red-500 font-medium mt-1">High Demand (+15%)</span>
+                      )}
+                    </div>
                   </div>
                   <p className="text-gray-500 text-sm mb-4">{pkg.description}</p>
+                  
+                  <div className="flex justify-between items-center mb-4 text-sm font-medium">
+                    <span className={pkg.remaining <= 10 ? 'text-red-500' : 'text-green-600'}>
+                      {pkg.remaining} tickets left
+                    </span>
+                  </div>
+
                   <button 
                     onClick={() => handleOpenCheckout(pkg)}
-                    className="w-full py-2.5 px-4 bg-gray-900 hover:bg-black text-white rounded-xl font-medium transition"
+                    disabled={pkg.remaining <= 0}
+                    className="w-full py-2.5 px-4 bg-gray-900 hover:bg-black text-white rounded-xl font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Get Ticket
+                    {pkg.remaining <= 0 ? 'Sold Out' : 'Get Ticket'}
                   </button>
                 </div>
               ))
@@ -330,7 +343,7 @@ export default function EventClient({ event, packages, session }: EventClientPro
                         </div>
                         <div className="flex justify-between text-base font-semibold pt-2">
                           <span>Total Amount</span>
-                          <span>KES {Number(selectedPackage?.price).toLocaleString()}</span>
+                          <span>KES {Number(selectedPackage?.currentPrice || selectedPackage?.price).toLocaleString()}</span>
                         </div>
                       </div>
 

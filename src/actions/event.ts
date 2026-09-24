@@ -62,3 +62,14 @@ export async function deleteEvent(id: string) {
   revalidatePath("/events");
   revalidatePath("/dashboard");
 }
+
+export async function getEventPackages(eventId: string) {
+  const pkgs = await sql`SELECT * FROM ticket_packages WHERE event_id = ${eventId}`;
+  return pkgs;
+}
+
+export async function updatePackage(pkgId: string, capacity: number) {
+  await sql`UPDATE ticket_packages SET capacity = ${capacity} WHERE id = ${pkgId}`;
+  revalidatePath("/events");
+  revalidatePath("/dashboard");
+}

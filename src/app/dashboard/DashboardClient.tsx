@@ -219,6 +219,12 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
                         <p className="text-sm text-gray-500">{new Date(event.date).toLocaleDateString()} • {event.location}</p>
                       </div>
                       <div className="flex gap-2">
+                        <Link 
+                          href={`/admin/events/${event.id}/edit`}
+                          className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                        >
+                          Edit Tickets
+                        </Link>
                         <button 
                           onClick={() => handleDeleteEvent(event.id)}
                           disabled={isDeleting === event.id}

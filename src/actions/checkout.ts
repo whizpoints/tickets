@@ -22,7 +22,7 @@ export async function processCheckout(formData: FormData) {
 
     // 1. Get package details with the event using JOIN
     const packages = await sql`
-      SELECT tp.id, tp.price, e.title as event_title 
+      SELECT tp.id, tp.price, tp.capacity, e.title as event_title 
       FROM ticket_packages tp 
       JOIN events e ON tp.event_id = e.id 
       WHERE tp.id = ${packageId}
@@ -31,6 +31,20 @@ export async function processCheckout(formData: FormData) {
     
     if (packages.length === 0) throw new Error("Package not found");
     const pkg = packages[0];
+
+    // Calculate capacity and dynamic price
+    const soldRes = await sql`SELECT COUNT(*) as count FROM tickets WHERE package_id = ${pkg.id} AND status IN ('ACTIVE', 'SUCCESS', 'PENDING')`;
+    const soldCount = parseInt(soldRes[0].count);
+    const remaining = pkg.capacity - soldCount;
+
+    if (remaining <= 0) {
+      throw new Error("This ticket package is sold out");
+    }
+
+    let currentPrice = Number(pkg.price);
+    if (remaining <= 10) {
+      currentPrice = Math.ceil(currentPrice * 1.15); // 15% higher
+    }
 
     // 2. Upsert user (Postgres ON CONFLICT)
     const users = await sql`
@@ -54,7 +68,7 @@ export async function processCheckout(formData: FormData) {
     const accountRef = cleanEventName.substring(0, 12).trim();
 
     // 5. Initiate M-PESA STK Push
-    const stkResponse = await initiateSTKPush(phone, pkg.price, accountRef, `Ticket for ${pkg.event_title}`);
+    const stkResponse = await initiateSTKPush(phone, currentPrice, accountRef, `Ticket for ${pkg.event_title}`);
     
     if (stkResponse.ResponseCode !== "0") {
       throw new Error(`M-PESA Error: ${stkResponse.errorMessage}`);
@@ -64,7 +78,7 @@ export async function processCheckout(formData: FormData) {
     const paymentId = uuidv4();
     await sql`
       INSERT INTO payments (id, ticket_id, amount, phone, account_reference, status, checkout_request_id, created_at, updated_at)
-      VALUES (${paymentId}, ${ticketId}, ${pkg.price}, ${phone}, ${accountRef}, 'PENDING', ${stkResponse.CheckoutRequestID}, NOW(), NOW())
+      VALUES (${paymentId}, ${ticketId}, ${currentPrice}, ${phone}, ${accountRef}, 'PENDING', ${stkResponse.CheckoutRequestID}, NOW(), NOW())
     `;
 
     return { 

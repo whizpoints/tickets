@@ -9,14 +9,31 @@ export async function sendWhatsAppTicket(phone: string, ticketData: any) {
   const imageUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/api/ticket/image?id=${ticketData.id}&event=${encodeURIComponent(ticketData.package.event.title)}&pkg=${encodeURIComponent(ticketData.package.name)}&date=${encodeURIComponent(new Date(ticketData.package.event.date).toLocaleDateString())}&venue=${encodeURIComponent(ticketData.package.event.venue)}&name=${userName}&phone=${encodeURIComponent(ticketData.user.phone)}`;
 
   try {
-    const response = await fetch('https://api.whizpoint.app/api/whatsapp/send', {
+    const waServiceUrl = process.env.WHATSAPP_SERVICE_URL || 'https://api.whizpoint.app';
+    const waApiKey = process.env.WHATSAPP_SERVICE_API_KEY || ''; // If using the microservice
+    const headers: any = { 'Content-Type': 'application/json' };
+    if (waApiKey) headers['x-api-key'] = waApiKey;
+
+    const response = await fetch(`${waServiceUrl}/api/send-message`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: formattedPhone, message, imageUrl })
+      headers,
+      body: JSON.stringify({ to: formattedPhone, message, imageUrl })
     });
 
+    // Also send notification to Admin Group if configured
+    if (process.env.ADMIN_WHATSAPP_GROUP_ID) {
+      await fetch(`${waServiceUrl}/api/send-message`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ 
+          to: process.env.ADMIN_WHATSAPP_GROUP_ID, 
+          message: `🎟️ *New Ticket Sold!*\n\n*Event:* ${ticketData.package.event.title}\n*Package:* ${ticketData.package.name}\n*Buyer:* ${ticketData.user.firstName} ${ticketData.user.lastName}\n*Phone:* ${formattedPhone}` 
+        })
+      }).catch(e => console.error("[WhatsApp] Group notification failed:", e));
+    }
+
     const data = await response.json();
-    if (data.success) {
+    if (data.success || response.ok) {
       console.log(`[WhatsApp] Ticket sent successfully to ${phone}`);
       return true;
     } else {
