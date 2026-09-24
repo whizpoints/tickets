@@ -23,7 +23,7 @@ export async function sendEmailTicket(email: string, ticketData: any) {
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:16px 16px 0 0;padding:32px;text-align:center;">
       <div style="margin-bottom: 16px;">
-        <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/images.jpg" alt="FlashPass Logo" style="width:72px;height:72px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.2);" />
+        <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/logo.png" alt="FlashPass Logo" style="width:72px;height:72px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.2);" />
       </div>
       <h1 style="color:#ffffff;font-size:28px;margin:0 0 8px 0;">FlashPass</h1>
       <p style="color:#93c5fd;font-size:14px;margin:0;">Your ticket is confirmed!</p>
@@ -143,7 +143,7 @@ export async function sendEmailOTP(email: string, otp: string) {
   <div style="max-width:450px;margin:40px auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
     <div style="background:#111827;padding:32px;text-align:center;">
       <div style="margin-bottom: 16px;">
-        <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/images.jpg" alt="Logo" style="width:64px;height:64px;border-radius:12px;" />
+        <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/logo.png" alt="Logo" style="width:64px;height:64px;border-radius:12px;" />
       </div>
       <h2 style="color:#ffffff;margin:0;font-size:22px;font-weight:600;">Security Verification</h2>
     </div>
