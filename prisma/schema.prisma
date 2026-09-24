@@ -1,0 +1,94 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets   Ticket[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  location    String
+  venue       String
+  imageUrl    String
+  organizer   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  packages    TicketPackage[]
+}
+
+model TicketPackage {
+  id          String   @id @default(cuid())
+  eventId     String
+  name        String
+  description String?
+  price       Float
+  capacity    Int
+  event       Event    @relation(fields: [eventId], references: [id])
+  tickets     Ticket[]
+}
+
+model Ticket {
+  id           String   @id @default(cuid())
+  userId       String
+  packageId    String
+  status       TicketStatus @default(PENDING)
+  qrCode       String?
+  attendeeName String?
+  
+  user         User     @relation(fields: [userId], references: [id])
+  package      TicketPackage @relation(fields: [packageId], references: [id])
+  payment      Payment?
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum TicketStatus {
+  PENDING
+  ACTIVE
+  USED
+  CANCELLED
+}
+
+model Payment {
+  id               String   @id @default(cuid())
+  ticketId         String   @unique
+  amount           Float
+  status           PaymentStatus @default(PENDING)
+  mpesaReceipt     String?
+  accountReference String   // Max 12 chars
+  phone            String
+  
+  ticket           Ticket   @relation(fields: [ticketId], references: [id])
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
