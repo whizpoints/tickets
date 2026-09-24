@@ -6,7 +6,7 @@ export async function sendEmailTicket(email: string, ticketData: any) {
   const payload = {
     sender: { 
       name: "FlashPass Tickets", 
-      email: `tickets@${process.env.NEXT_PUBLIC_DOMAIN || 'whizpoint.app'}` 
+      email: "support@whizpoint.app"
     },
     to: [{ email: email }],
     subject: `Your Ticket for ${ticketData.package.event.title} — FlashPass`,
@@ -130,7 +130,7 @@ export async function sendEmailTicket(email: string, ticketData: any) {
 export async function sendEmailOTP(email: string, otp: string) {
   const brevoApiKey = process.env.BREVO_API_KEY!;
   const payload = {
-    sender: { name: "FlashPass Security", email: `security@${process.env.NEXT_PUBLIC_DOMAIN || 'whizpoint.app'}` },
+    sender: { name: "FlashPass Security", email: "support@whizpoint.app" },
     to: [{ email: email }],
     subject: `Your FlashPass Verification Code: ${otp}`,
     htmlContent: `

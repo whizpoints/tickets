@@ -12,7 +12,7 @@ async function sendOTPWhatsApp(phone: string, otp: string) {
   try {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), 5000); // 5 sec timeout
-    await fetch('http://localhost:3000/api/whatsapp/send', {
+    await fetch('https://api.whizpoint.app/api/whatsapp/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone: formattedPhone, message }),

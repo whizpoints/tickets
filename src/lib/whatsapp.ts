@@ -9,7 +9,7 @@ export async function sendWhatsAppTicket(phone: string, ticketData: any) {
   const imageUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/api/ticket/image?id=${ticketData.id}&event=${encodeURIComponent(ticketData.package.event.title)}&pkg=${encodeURIComponent(ticketData.package.name)}&date=${encodeURIComponent(new Date(ticketData.package.event.date).toLocaleDateString())}&venue=${encodeURIComponent(ticketData.package.event.venue)}&name=${userName}&phone=${encodeURIComponent(ticketData.user.phone)}`;
 
   try {
-    const response = await fetch('http://localhost:3000/api/whatsapp/send', {
+    const response = await fetch('https://api.whizpoint.app/api/whatsapp/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone: formattedPhone, message, imageUrl })
