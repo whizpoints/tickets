@@ -34,7 +34,13 @@ let sock = null;
 let connectionState = 'connecting';
 let currentQr = null;
 let botDevice = null;
+let cachedGroups = [];
+let activeGroupId = null;
 let startTime = Date.now();
+const settingsPath = path.join(__dirname, 'auth_info_baileys', 'settings.json');
+if (fs.existsSync(settingsPath)) {
+  try { activeGroupId = JSON.parse(fs.readFileSync(settingsPath)).activeGroupId; } catch(e){}
+}
 
 async function generateQRWithLogo(qrData) {
   try {
@@ -87,6 +93,12 @@ async function setupWhatsApp() {
       connectionState = 'open';
       currentQr = null;
       botDevice = { id: sock.user.id, name: sock.user.name || 'Bot' };
+      try {
+        const chats = await sock.groupFetchAllParticipating();
+        cachedGroups = Object.values(chats).map(g => ({ id: g.id, name: g.subject }));
+      } catch (err) {
+        console.error('Error fetching groups:', err);
+      }
     }
   });
 
@@ -152,6 +164,24 @@ app.get('/', (req, res) => {
 });
 
 // API Endpoints
+app.get('/api/status', authenticateApiKey, (req, res) => {
+  res.json({
+    connectionState,
+    currentQr,
+    botDevice,
+    uptime: Math.floor((Date.now() - startTime) / 1000),
+    groups: cachedGroups,
+    activeGroupId
+  });
+});
+
+app.post('/api/set-group', authenticateApiKey, (req, res) => {
+  activeGroupId = req.body.groupId;
+  if (!fs.existsSync(path.join(__dirname, 'auth_info_baileys'))) fs.mkdirSync(path.join(__dirname, 'auth_info_baileys'), { recursive: true });
+  fs.writeFileSync(settingsPath, JSON.stringify({ activeGroupId }));
+  res.json({ success: true, activeGroupId });
+});
+
 app.post('/api/send-message', authenticateApiKey, async (req, res) => {
   try {
     const { to, message, imageUrl } = req.body;
