@@ -43,7 +43,8 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
     if (isAdmin) {
       const checkWA = async () => {
         try {
-          const res = await fetch('/api/whatsapp/status');
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app';
+          const res = await fetch(`${baseUrl}/api/whatsapp/status`);
           const data = await res.json();
           setWaStatus(data);
         } catch (e) {
@@ -57,7 +58,8 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
   }, [isAdmin]);
 
   const handleWaLogout = async () => {
-    await fetch('/api/whatsapp/logout', { method: 'POST' });
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app';
+    await fetch(`${baseUrl}/api/whatsapp/logout`, { method: 'POST' });
   };
 
   const handleDeleteEvent = async (id: string) => {

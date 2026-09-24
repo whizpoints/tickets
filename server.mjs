@@ -63,6 +63,14 @@ app.prepare().then(() => {
     connectToWhatsApp();
     
     const server = express();
+    
+    server.use((req, res, next) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type');
+        if (req.method === 'OPTIONS') return res.sendStatus(200);
+        next();
+    });
 
     // Native WhatsApp endpoints built into the main NextJS process!
     server.get('/api/whatsapp/status', (req, res) => {
