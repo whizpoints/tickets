@@ -73,3 +73,30 @@ export async function updatePackage(pkgId: string, capacity: number) {
   revalidatePath("/events");
   revalidatePath("/dashboard");
 }
+
+export async function updateEventDetails(id: string, formData: FormData) {
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const dateStr = formData.get("date") as string;
+  const timeStr = formData.get("time") as string;
+  const venue = formData.get("venue") as string;
+  const location = formData.get("location") as string;
+  const coverImage = formData.get("coverImage") as string;
+  
+  const eventDate = new Date(`${dateStr}T${timeStr || '00:00'}:00`).toISOString();
+
+  await sql`
+    UPDATE events
+    SET title = ${title},
+        description = ${description},
+        date = ${eventDate},
+        venue = ${venue},
+        location = ${location},
+        image_url = ${coverImage}
+    WHERE id = ${id}
+  `;
+
+  revalidatePath("/");
+  revalidatePath("/events");
+  revalidatePath("/dashboard");
+}
