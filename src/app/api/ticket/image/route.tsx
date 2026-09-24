@@ -17,36 +17,6 @@ export async function GET(req: NextRequest) {
 
     const shortId = id.split('-')[0].toUpperCase();
 
-    // Icons
-    const UserIcon = () => (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-    );
-
-    const PhoneIcon = () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-      </svg>
-    );
-
-    const CalendarIcon = () => (
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-        <line x1="16" y1="2" x2="16" y2="6"></line>
-        <line x1="8" y1="2" x2="8" y2="6"></line>
-        <line x1="3" y1="10" x2="21" y2="10"></line>
-      </svg>
-    );
-
-    const MapPinIcon = () => (
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-        <circle cx="12" cy="10" r="3"></circle>
-      </svg>
-    );
-
     return new ImageResponse(
       (
         <div
@@ -56,26 +26,26 @@ export async function GET(req: NextRequest) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#ffffff', // outer padding background (if any), but we fill it
             fontFamily: 'sans-serif',
+            backgroundColor: '#070a13',
           }}
         >
-          {/* Ticket Canvas */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'row',
               width: '1200px',
               height: '600px',
-              backgroundColor: '#070a13', // Very dark blue/black
+              backgroundColor: '#0c1222',
               borderRadius: '40px',
               overflow: 'hidden',
               position: 'relative',
+              border: '1px solid #1e293b',
             }}
           >
-            {/* Background decorative elements */}
-            <div style={{ position: 'absolute', top: '-100px', right: '350px', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }} />
-            <div style={{ position: 'absolute', bottom: '-150px', left: '-100px', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }} />
+            {/* Ambient glow effects */}
+            <div style={{ position: 'absolute', top: '-80px', left: '200px', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)', borderRadius: '50%', display: 'flex' }} />
+            <div style={{ position: 'absolute', bottom: '-120px', right: '300px', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)', borderRadius: '50%', display: 'flex' }} />
 
             {/* LEFT PANEL */}
             <div
@@ -83,75 +53,83 @@ export async function GET(req: NextRequest) {
                 display: 'flex',
                 flexDirection: 'column',
                 flex: 1,
-                padding: '50px 60px',
+                padding: '48px 56px',
                 position: 'relative',
               }}
             >
-              {/* Header: Logo and Subtitles */}
-              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', width: '100%', gap: '40px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '140px', height: '140px', borderRadius: '70px', overflow: 'hidden', border: '3px solid #3b82f6', padding: '5px' }}>
-                  <img src={`${appUrl}/logo.png`} style={{ width: '100%', height: '100%', borderRadius: '65px', objectFit: 'cover' }} />
+              {/* Header Row: Logo + Taglines */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '30px', marginBottom: '32px' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100px',
+                  height: '100px',
+                  borderRadius: '50px',
+                  overflow: 'hidden',
+                  border: '3px solid #3b82f6',
+                }}>
+                  <img src={`${appUrl}/logo.png`} style={{ width: '94px', height: '94px', borderRadius: '47px', objectFit: 'cover' }} />
                 </div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                  <span style={{ color: '#d1d5db', fontSize: '18px', letterSpacing: '4px', marginBottom: '8px' }}>MUSIC / EVENTS / LIFESTYLE</span>
-                  <span style={{ color: '#9ca3af', fontSize: '14px', letterSpacing: '6px' }}>CREATE • CONNECT • EXPERIENCE</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ color: '#cbd5e1', fontSize: '16px', letterSpacing: '5px', fontWeight: 500 }}>MUSIC / EVENTS / LIFESTYLE</span>
+                  <span style={{ color: '#64748b', fontSize: '13px', letterSpacing: '5px', marginTop: '6px' }}>CREATE  •  CONNECT  •  EXPERIENCE</span>
                 </div>
               </div>
 
               {/* Event Title */}
-              <div style={{ display: 'flex', flexDirection: 'column', marginTop: '40px' }}>
-                <h1 style={{ fontSize: '72px', fontWeight: 900, color: 'white', margin: '0 0 15px 0', lineHeight: 1.1, textTransform: 'uppercase' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '28px' }}>
+                <span style={{ fontSize: '58px', fontWeight: 900, color: '#ffffff', lineHeight: 1.1, textTransform: 'uppercase', letterSpacing: '-1px' }}>
                   {event}
-                </h1>
-                <div style={{ height: '6px', width: '350px', backgroundImage: 'linear-gradient(to right, #3b82f6, #a855f7)' }} />
+                </span>
+                <div style={{ display: 'flex', height: '5px', width: '300px', marginTop: '16px', background: 'linear-gradient(to right, #3b82f6, #a855f7)', borderRadius: '3px' }} />
               </div>
 
-              {/* Attendee Info */}
-              <div style={{ display: 'flex', flexDirection: 'column', marginTop: '40px', gap: '20px' }}>
-                {name && (
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', backgroundImage: 'linear-gradient(to right, #3b82f6, #a855f7)', padding: '12px 35px', borderRadius: '50px' }}>
-                      <UserIcon />
-                      <span style={{ fontSize: '24px', color: 'white', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                        ISSUED TO: {name}
-                      </span>
+              {/* Attendee Pill */}
+              {name && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', background: 'linear-gradient(to right, #3b82f6, #7c3aed)', padding: '12px 30px', borderRadius: '50px', gap: '12px' }}>
+                    <span style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '2px' }}>ISSUED TO:</span>
+                    <span style={{ fontSize: '22px', color: '#ffffff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>{name}</span>
+                  </div>
+                  {phone && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '16px' }}>
+                      <span style={{ fontSize: '20px', color: '#a78bfa' }}>Tel:</span>
+                      <span style={{ fontSize: '20px', color: '#e2e8f0', letterSpacing: '1px' }}>{phone}</span>
                     </div>
-                  </div>
-                )}
-                {phone && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: '20px' }}>
-                    <PhoneIcon />
-                    <span style={{ fontSize: '22px', color: '#e5e7eb', letterSpacing: '1px' }}>Phone: {phone}</span>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
 
-              {/* Date & Venue */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '40px', marginTop: '40px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <CalendarIcon />
+              {/* Date & Venue Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '30px', marginTop: 'auto', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '10px', backgroundColor: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)' }}>
+                    <span style={{ fontSize: '22px' }}>&#128197;</span>
+                  </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '16px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '4px' }}>Date</span>
-                    <span style={{ fontSize: '24px', color: 'white', fontWeight: 600 }}>{date !== 'TBA' ? new Date(date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }) : 'TBA'}</span>
+                    <span style={{ fontSize: '13px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px' }}>Date</span>
+                    <span style={{ fontSize: '22px', color: '#f1f5f9', fontWeight: 700 }}>{date}</span>
                   </div>
                 </div>
 
-                <div style={{ width: '2px', height: '50px', backgroundColor: '#374151' }} />
+                <div style={{ display: 'flex', width: '2px', height: '45px', backgroundColor: '#1e293b' }} />
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <MapPinIcon />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '10px', backgroundColor: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)' }}>
+                    <span style={{ fontSize: '22px' }}>&#128205;</span>
+                  </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '16px', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '4px' }}>Venue</span>
-                    <span style={{ fontSize: '24px', color: 'white', fontWeight: 600 }}>{venue}</span>
+                    <span style={{ fontSize: '13px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px' }}>Venue</span>
+                    <span style={{ fontSize: '22px', color: '#f1f5f9', fontWeight: 700 }}>{venue}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Footer text */}
-              <div style={{ display: 'flex', marginTop: 'auto' }}>
-                <span style={{ color: '#6b7280', fontSize: '14px', letterSpacing: '4px', textTransform: 'uppercase' }}>
-                  GOOD VIBES • GREAT PEOPLE • UNFORGETTABLE MOMENTS
+              {/* Footer tagline */}
+              <div style={{ display: 'flex' }}>
+                <span style={{ color: '#475569', fontSize: '12px', letterSpacing: '4px', textTransform: 'uppercase' }}>
+                  GOOD VIBES  •  GREAT PEOPLE  •  UNFORGETTABLE MOMENTS
                 </span>
               </div>
             </div>
@@ -163,58 +141,54 @@ export async function GET(req: NextRequest) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '400px',
-                borderLeft: '3px dashed #1f2937',
+                width: '380px',
+                borderLeft: '3px dashed #1e293b',
                 position: 'relative',
+                backgroundColor: 'rgba(15,23,42,0.5)',
               }}
             >
-              {/* Ticket Cutouts */}
-              <div style={{ position: 'absolute', top: '-25px', left: '-25px', width: '50px', height: '50px', backgroundColor: '#ffffff', borderRadius: '25px' }} />
-              <div style={{ position: 'absolute', bottom: '-25px', left: '-25px', width: '50px', height: '50px', backgroundColor: '#ffffff', borderRadius: '25px' }} />
+              {/* Ticket cutout circles */}
+              <div style={{ position: 'absolute', top: '-24px', left: '-24px', width: '48px', height: '48px', backgroundColor: '#070a13', borderRadius: '24px', display: 'flex' }} />
+              <div style={{ position: 'absolute', bottom: '-24px', left: '-24px', width: '48px', height: '48px', backgroundColor: '#070a13', borderRadius: '24px', display: 'flex' }} />
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '40px' }}>
-                <div style={{ height: '2px', width: '30px', backgroundColor: '#3b82f6' }} />
-                <span style={{ fontSize: '20px', color: '#e5e7eb', textTransform: 'uppercase', letterSpacing: '3px' }}>
-                  SCAN AT ENTRY
-                </span>
-                <div style={{ height: '2px', width: '30px', backgroundColor: '#a855f7' }} />
+              {/* SCAN AT ENTRY header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px' }}>
+                <div style={{ display: 'flex', height: '2px', width: '25px', background: 'linear-gradient(to right, transparent, #3b82f6)' }} />
+                <span style={{ fontSize: '17px', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '4px', fontWeight: 600 }}>SCAN AT ENTRY</span>
+                <div style={{ display: 'flex', height: '2px', width: '25px', background: 'linear-gradient(to left, transparent, #a855f7)' }} />
               </div>
 
-              {/* QR Code with Gradient Border */}
+              {/* QR Code with gradient border */}
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '8px',
-                  backgroundImage: 'linear-gradient(to bottom right, #3b82f6, #a855f7)',
-                  borderRadius: '24px',
-                  marginBottom: '40px',
+                  padding: '7px',
+                  background: 'linear-gradient(135deg, #3b82f6, #a855f7)',
+                  borderRadius: '22px',
+                  marginBottom: '30px',
                 }}
               >
-                <div style={{ display: 'flex', padding: '15px', backgroundColor: 'white', borderRadius: '16px' }}>
+                <div style={{ display: 'flex', padding: '12px', backgroundColor: '#ffffff', borderRadius: '15px' }}>
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`${appUrl}/ticket?id=${id}`)}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${appUrl}/ticket?id=${id}`)}`}
                     alt="QR"
-                    style={{ width: '220px', height: '220px' }}
+                    style={{ width: '200px', height: '200px' }}
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '40px' }}>
-                <div style={{ height: '2px', width: '20px', backgroundColor: '#3b82f6' }} />
-                <span style={{ fontSize: '18px', color: '#9ca3af', fontFamily: 'monospace', letterSpacing: '2px' }}>
-                  ID: {shortId}
-                </span>
-                <div style={{ height: '2px', width: '20px', backgroundColor: '#a855f7' }} />
+              {/* Ticket ID */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px' }}>
+                <div style={{ display: 'flex', height: '1px', width: '20px', backgroundColor: '#3b82f6' }} />
+                <span style={{ fontSize: '16px', color: '#94a3b8', fontFamily: 'monospace', letterSpacing: '2px' }}>ID: {shortId}</span>
+                <div style={{ display: 'flex', height: '1px', width: '20px', backgroundColor: '#a855f7' }} />
               </div>
 
-              <span style={{ fontSize: '32px', color: '#d1d5db', fontStyle: 'italic', fontWeight: 600 }}>
-                See You There!
-              </span>
-              {/* Decorative swish under text */}
-              <div style={{ height: '4px', width: '150px', backgroundImage: 'linear-gradient(to right, #3b82f6, #a855f7)', borderRadius: '2px', marginTop: '10px', transform: 'rotate(-2deg)' }} />
-
+              {/* See You There */}
+              <span style={{ fontSize: '30px', color: '#e2e8f0', fontStyle: 'italic', fontWeight: 600 }}>See You There!</span>
+              <div style={{ display: 'flex', height: '3px', width: '140px', background: 'linear-gradient(to right, #3b82f6, #a855f7)', borderRadius: '2px', marginTop: '8px' }} />
             </div>
           </div>
         </div>
@@ -225,7 +199,8 @@ export async function GET(req: NextRequest) {
       }
     );
   } catch (e: any) {
-    return new Response(`Failed to generate image`, {
+    console.error('Ticket image generation error:', e);
+    return new Response(`Failed to generate image: ${e.message}`, {
       status: 500,
     });
   }
