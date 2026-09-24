@@ -22,11 +22,8 @@ export async function sendEmailTicket(email: string, ticketData: any) {
     
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:16px 16px 0 0;padding:32px;text-align:center;">
-      <div style="margin-bottom: 12px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 5p2 0a2 2 0 0 1 2 2v2M19 15v2a2 2 0 0 1-2 2h-2M9 19H7a2 2 0 0 1-2-2v-2M5 9V7a2 2 0 0 1 2-2h2"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
+      <div style="margin-bottom: 16px;">
+        <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/images.jpg" alt="FlashPass Logo" style="width:72px;height:72px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.2);" />
       </div>
       <h1 style="color:#ffffff;font-size:28px;margin:0 0 8px 0;">FlashPass</h1>
       <p style="color:#93c5fd;font-size:14px;margin:0;">Your ticket is confirmed!</p>
@@ -81,7 +78,7 @@ export async function sendEmailTicket(email: string, ticketData: any) {
       
       <!-- Modern Ticket Image -->
       <div style="text-align:center;padding:12px;margin-bottom:24px;">
-        <img src="${process.env.NEXT_PUBLIC_APP_URL}/api/ticket/image?id=${ticketData.id}&event=${encodeURIComponent(ticketData.package.event.title)}&pkg=${encodeURIComponent(ticketData.package.name)}&date=${encodeURIComponent(new Date(ticketData.package.event.date).toLocaleDateString())}&venue=${encodeURIComponent(ticketData.package.event.venue)}&name=${encodeURIComponent(ticketData.user.firstName + ' ' + ticketData.user.lastName)}" 
+        <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/api/ticket/image?id=${ticketData.id}&event=${encodeURIComponent(ticketData.package.event.title)}&pkg=${encodeURIComponent(ticketData.package.name)}&date=${encodeURIComponent(new Date(ticketData.package.event.date).toLocaleDateString())}&venue=${encodeURIComponent(ticketData.package.event.venue)}&name=${encodeURIComponent(ticketData.user.firstName + ' ' + ticketData.user.lastName)}&phone=${encodeURIComponent(ticketData.user.phone)}" 
              alt="Your Digital Ticket" width="100%" style="max-width:600px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.1);" />
       </div>
       
@@ -144,12 +141,11 @@ export async function sendEmailOTP(email: string, otp: string) {
 </head>
 <body style="margin:0;padding:0;background-color:#f4f4f5;font-family:system-ui,-apple-system,sans-serif;">
   <div style="max-width:450px;margin:40px auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
-    <div style="background:#111827;padding:24px;text-align:center;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-      <h2 style="color:#ffffff;margin:12px 0 0 0;font-size:20px;font-weight:600;">Security Verification</h2>
+    <div style="background:#111827;padding:32px;text-align:center;">
+      <div style="margin-bottom: 16px;">
+        <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/images.jpg" alt="Logo" style="width:64px;height:64px;border-radius:12px;" />
+      </div>
+      <h2 style="color:#ffffff;margin:0;font-size:22px;font-weight:600;">Security Verification</h2>
     </div>
     <div style="padding:32px;text-align:center;">
       <p style="color:#4b5563;font-size:15px;margin-bottom:24px;">Please use the following one-time code to securely verify your account:</p>

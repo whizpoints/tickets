@@ -60,7 +60,7 @@ async function TicketContent({ searchParams }: { searchParams: Promise<{ id?: st
                 <div className="absolute -right-4 top-1/2 w-8 h-8 bg-blue-50 rounded-full transform -translate-y-1/2 border-l border-gray-100" />
                 
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`https://api.whizpoint.app/ticket?id=${ticketId}`)}&color=${isValid ? '000000' : '999999'}`}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/ticket?id=${ticketId}`)}&color=${isValid ? '000000' : '999999'}`}
                   alt="Ticket QR Code"
                   className={`w-56 h-56 rounded-xl ${!isValid && 'opacity-50 blur-[2px]'}`}
                 />

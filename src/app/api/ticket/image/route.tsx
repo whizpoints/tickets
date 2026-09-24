@@ -12,6 +12,8 @@ export async function GET(req: NextRequest) {
     const date = searchParams.get('date') || 'TBA';
     const venue = searchParams.get('venue') || 'TBA';
     const name = searchParams.get('name') || '';
+    const phone = searchParams.get('phone') || '';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app';
 
     return new ImageResponse(
       (
@@ -33,8 +35,8 @@ export async function GET(req: NextRequest) {
             style={{
               display: 'flex',
               flexDirection: 'row',
-              width: '900px',
-              height: '400px',
+              width: '1000px',
+              height: '450px',
               backgroundColor: 'white',
               borderRadius: '30px',
               boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
@@ -48,7 +50,7 @@ export async function GET(req: NextRequest) {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 flex: 1,
-                padding: '40px',
+                padding: '50px',
                 borderRight: '4px dashed #e5e7eb',
                 position: 'relative',
               }}
@@ -57,37 +59,38 @@ export async function GET(req: NextRequest) {
               <div
                 style={{
                   position: 'absolute',
-                  top: '-25px',
-                  right: '-25px',
-                  width: '50px',
-                  height: '50px',
+                  top: '-30px',
+                  right: '-30px',
+                  width: '60px',
+                  height: '60px',
                   backgroundColor: '#f9fafb',
-                  borderRadius: '25px',
+                  borderRadius: '30px',
                 }}
               />
               <div
                 style={{
                   position: 'absolute',
-                  bottom: '-25px',
-                  right: '-25px',
-                  width: '50px',
-                  height: '50px',
+                  bottom: '-30px',
+                  right: '-30px',
+                  width: '60px',
+                  height: '60px',
                   backgroundColor: '#f9fafb',
-                  borderRadius: '25px',
+                  borderRadius: '30px',
                 }}
               />
 
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                <span style={{ color: '#2563eb', fontSize: '24px', fontWeight: 'bold' }}>FlashPass</span>
+                <img src={`${appUrl}/images.jpg`} style={{ width: '130px', height: '130px', borderRadius: '25px', objectFit: 'cover' }} />
               </div>
-              <h1 style={{ fontSize: '42px', fontWeight: 800, color: '#111827', margin: '0 0 10px 0', lineHeight: 1.1 }}>
+              <h1 style={{ fontSize: '46px', fontWeight: 800, color: '#111827', margin: '0 0 10px 0', lineHeight: 1.1 }}>
                 {event}
               </h1>
-              <p style={{ fontSize: '24px', color: '#4b5563', margin: '0 0 20px 0' }}>{pkg}</p>
+              <p style={{ fontSize: '26px', color: '#4b5563', margin: '0 0 20px 0' }}>{pkg}</p>
               
               {name && (
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px', padding: '15px', backgroundColor: '#f3f4f6', borderRadius: '12px' }}>
                   <span style={{ fontSize: '18px', color: '#1f2937', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Admitting: {name}</span>
+                  {phone && <span style={{ fontSize: '16px', color: '#4b5563', marginTop: '4px' }}>Phone: {phone}</span>}
                 </div>
               )}
 
@@ -119,7 +122,7 @@ export async function GET(req: NextRequest) {
                 Scan at entry
               </span>
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`https://api.whizpoint.app/ticket?id=${id}`)}`}
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${appUrl}/ticket?id=${id}`)}`}
                 alt="QR"
                 style={{ width: '200px', height: '200px', borderRadius: '15px' }}
               />

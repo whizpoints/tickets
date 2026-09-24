@@ -31,8 +31,8 @@ export async function initiateSTKPush(phoneStr: string, amount: number, accountR
   const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -3);
   const password = Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
 
-  // Callback routed through the secure tunnel per user rules
-  const callbackUrl = `https://api.whizpoint.app/api/webhooks/mpesa`;
+  // Callback routed through the secure tunnel per user rules or production domain
+  const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app'}/api/webhooks/mpesa`;
 
   const payload = {
     BusinessShortCode: shortCode,
