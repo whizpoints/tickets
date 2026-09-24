@@ -1,0 +1,5 @@
+2026/09/24-17:50:09.681 48ec Creating DB C:\Users\Josphat Mburu\Documents\codes\flash-pass\.wwebjs_auth\session\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/09/24-17:50:09.741 48ec Reusing MANIFEST C:\Users\Josphat Mburu\Documents\codes\flash-pass\.wwebjs_auth\session\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/09/24-17:50:19.989 2164 Level-0 table #5: started
+2026/09/24-17:50:20.001 2164 Level-0 table #5: 683273 bytes OK
+2026/09/24-17:50:20.008 2164 Delete type=0 #3

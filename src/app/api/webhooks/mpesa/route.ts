@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
     // Get pending payment with relations via JOINs, now using checkout_request_id instead of phone
     const payments = await sql`
-      SELECT p.id as payment_id, p.ticket_id, u.email as user_email, e.title as event_title, tp.name as package_name, e.date as event_date, e.venue as event_venue
+      SELECT p.id as payment_id, p.ticket_id, u.email as user_email, u.first_name, u.last_name, u.phone as user_phone, e.title as event_title, tp.name as package_name, e.date as event_date, e.venue as event_venue
       FROM payments p
       JOIN tickets t ON p.ticket_id = t.id
       JOIN users u ON t.user_id = u.id
@@ -73,6 +73,11 @@ export async function POST(req: Request) {
           date: pendingPayment.event_date,
           venue: pendingPayment.event_venue
         }
+      },
+      user: {
+        firstName: pendingPayment.first_name,
+        lastName: pendingPayment.last_name,
+        phone: phoneNumber || pendingPayment.user_phone
       }
     };
     

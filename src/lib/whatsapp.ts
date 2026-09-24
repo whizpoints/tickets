@@ -4,8 +4,9 @@ export async function sendWhatsAppTicket(phone: string, ticketData: any) {
   const formattedPhone = phone.startsWith('+') ? phone.slice(1) : phone;
   const ticketLink = `${process.env.NEXT_PUBLIC_APP_URL}/ticket?id=${ticketData.id}`;
   
-  const message = `🎟️ *FlashPass Ticket Confirmed!*\n\n*Event:* ${ticketData.package.event.title}\n*Package:* ${ticketData.package.name}\n*Date:* ${new Date(ticketData.package.event.date).toDateString()}\n*Venue:* ${ticketData.package.event.venue}\n\n*Click here to view your digital ticket & QR Code:*\n${ticketLink}\n\nThank you for using FlashPass! ⚡`;
-  const imageUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/ticket/image?id=${ticketData.id}&event=${encodeURIComponent(ticketData.package.event.title)}&pkg=${encodeURIComponent(ticketData.package.name)}&date=${encodeURIComponent(new Date(ticketData.package.event.date).toLocaleDateString())}&venue=${encodeURIComponent(ticketData.package.event.venue)}`;
+  const message = `*FlashPass Ticket Confirmed!*\n\nHi ${ticketData.user.firstName},\n\n*Event:* ${ticketData.package.event.title}\n*Package:* ${ticketData.package.name}\n*Date:* ${new Date(ticketData.package.event.date).toDateString()}\n*Venue:* ${ticketData.package.event.venue}\n\n*Click here to view your digital ticket & QR Code:*\n${ticketLink}\n\nThank you for using FlashPass!`;
+  const userName = encodeURIComponent(ticketData.user.firstName + ' ' + ticketData.user.lastName);
+  const imageUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/ticket/image?id=${ticketData.id}&event=${encodeURIComponent(ticketData.package.event.title)}&pkg=${encodeURIComponent(ticketData.package.name)}&date=${encodeURIComponent(new Date(ticketData.package.event.date).toLocaleDateString())}&venue=${encodeURIComponent(ticketData.package.event.venue)}&name=${userName}`;
 
   try {
     const response = await fetch('http://localhost:3000/api/whatsapp/send', {

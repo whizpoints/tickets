@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
     const pkg = searchParams.get('pkg') || 'Standard Ticket';
     const date = searchParams.get('date') || 'TBA';
     const venue = searchParams.get('venue') || 'TBA';
+    const name = searchParams.get('name') || '';
 
     return new ImageResponse(
       (
@@ -77,12 +78,18 @@ export async function GET(req: NextRequest) {
               />
 
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                <span style={{ color: '#2563eb', fontSize: '24px', fontWeight: 'bold' }}>⚡ FlashPass</span>
+                <span style={{ color: '#2563eb', fontSize: '24px', fontWeight: 'bold' }}>FlashPass</span>
               </div>
               <h1 style={{ fontSize: '42px', fontWeight: 800, color: '#111827', margin: '0 0 10px 0', lineHeight: 1.1 }}>
                 {event}
               </h1>
-              <p style={{ fontSize: '24px', color: '#4b5563', margin: '0 0 30px 0' }}>{pkg}</p>
+              <p style={{ fontSize: '24px', color: '#4b5563', margin: '0 0 20px 0' }}>{pkg}</p>
+              
+              {name && (
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <span style={{ fontSize: '18px', color: '#1f2937', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Admitting: {name}</span>
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '30px', marginTop: 'auto' }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>

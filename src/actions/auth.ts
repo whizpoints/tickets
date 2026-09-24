@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 
 async function sendOTPWhatsApp(phone: string, otp: string) {
   const formattedPhone = phone.startsWith('+') ? phone.slice(1) : phone;
-  const message = `🔐 *FlashPass Verification*\n\nYour OTP code is: *${otp}*\n\nDo not share this code with anyone.`;
+  const message = `*FlashPass Verification*\n\nYour OTP code is: *${otp}*\n\nDo not share this code with anyone.`;
   try {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), 5000); // 5 sec timeout

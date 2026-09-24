@@ -122,12 +122,12 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">My Tickets</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tickets.length === 0 ? (
+              {tickets.filter(t => t.status === 'ACTIVE' || t.status === 'SUCCESS').length === 0 ? (
                 <div className="col-span-full py-12 text-center text-gray-500 bg-white rounded-2xl border border-gray-100">
                   No tickets found. Browse events to buy one!
                 </div>
               ) : (
-                tickets.map((ticket, idx) => (
+                tickets.filter(t => t.status === 'ACTIVE' || t.status === 'SUCCESS').map((ticket, idx) => (
                   <motion.div
                     key={ticket.id}
                     initial={{ opacity: 0, y: 20 }}
