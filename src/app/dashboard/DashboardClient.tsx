@@ -271,7 +271,19 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
                   </p>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-700">Status:</span>
-                    
+                    {waStatus.connectionState === "open" ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                        <CheckCircle2 className="w-4 h-4" />
+                        Connected
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-700 rounded-full text-sm font-medium">
+                        <XCircle className="w-4 h-4" />
+                        Disconnected
+                      </div>
+                    )}
+                  </div>
+                  
                   {waStatus.connectionState === "open" ? (
                     <div className="space-y-4">
                       <button onClick={handleWaLogout} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition-colors">
