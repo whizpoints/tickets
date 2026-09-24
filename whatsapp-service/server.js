@@ -73,7 +73,7 @@ async function setupWhatsApp() {
       botDevice = null;
       currentQr = null;
       
-      const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
+      const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
       
       if (shouldReconnect) {
         setTimeout(setupWhatsApp, 3000);
@@ -99,7 +99,8 @@ async function setupWhatsApp() {
     const replyText = msg.message.extendedTextMessage?.text || msg.message.conversation;
     if (replyText?.trim().toLowerCase() === '.ping') {
       const uptime = Math.floor((Date.now() - startTime) / 1000);
-      await sock.sendMessage(msg.key.remoteJid, { text: \Pong! Uptime: \s\ }, { quoted: msg });
+      const jid = msg.key.remoteJid;
+      await sock.sendMessage(jid, { text: `Pong! Uptime: ${uptime}s\nYour JID is: *${jid}*` }, { quoted: msg });
     }
   });
 }
@@ -110,21 +111,26 @@ app.get('/', (req, res) => {
   let statusHTML = '<p>Connecting...</p>';
   
   if (connectionState === 'open') {
-    statusHTML = \
-      <div style="color: green; font-weight: bold; margin-bottom: 20px;">? Connected!</div>
-      <p>Device: \</p>
-      <p>Uptime: \s</p>
-    \;
+    statusHTML = `
+      <div style="color: green; font-weight: bold; margin-bottom: 20px;">✅ Connected!</div>
+      <p>Device: ${botDevice ? botDevice.id : 'Unknown'}</p>
+      <p>Uptime: ${uptime}s</p>
+    `;
   } else if (currentQr) {
-    statusHTML = \
+    statusHTML = `
       <div style="color: orange; font-weight: bold; margin-bottom: 20px;">Scan this QR with WhatsApp:</div>
-      <img src="\" style="width: 250px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
-    \;
+      <img src="${currentQr}" style="width: 250px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+    `;
   } else {
     statusHTML = '<p style="color: red;">Disconnected. Reconnecting...</p>';
   }
 
-  res.send(\
+  // Auto-refresh the page every 3 seconds IF not connected
+  const refreshScript = connectionState !== 'open' 
+    ? '<script>setTimeout(() => window.location.reload(), 3000);</script>' 
+    : '';
+
+  res.send(`
     <!DOCTYPE html>
     <html>
       <head>
@@ -137,11 +143,12 @@ app.get('/', (req, res) => {
       <body>
         <div class="card">
           <h2>WhatsApp Dispatcher</h2>
-          \
+          ${statusHTML}
         </div>
+        ${refreshScript}
       </body>
     </html>
-  \);
+  `);
 });
 
 // API Endpoints
@@ -155,7 +162,7 @@ app.post('/api/send-message', authenticateApiKey, async (req, res) => {
       return res.status(503).json({ error: 'WhatsApp is not connected' });
     }
     
-    const jid = to.includes('@s.whatsapp.net') || to.includes('@g.us') ? to : \\@s.whatsapp.net\;
+    const jid = to.includes('@s.whatsapp.net') || to.includes('@g.us') ? to : `${to}@s.whatsapp.net`;
     const msgContent = imageUrl ? { image: { url: imageUrl }, caption: message } : { text: message };
     
     const result = await sock.sendMessage(jid, msgContent);
@@ -177,6 +184,6 @@ app.post('/api/logout', authenticateApiKey, async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(\Server running on port \\);
+  console.log(`Server running on port ${port}`);
   setupWhatsApp();
 });
