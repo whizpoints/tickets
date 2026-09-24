@@ -35,7 +35,8 @@ const myTickets = [
 export default function DashboardClient({ user, tickets, adminEvents = [] }: { user: any, tickets: any[], adminEvents?: any[] }) {
   const [isAdmin, setIsAdmin] = useState(user?.role === "ADMIN");
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
-  const [waStatus, setWaStatus] = useState({ isConnected: false, qr: null });
+  const [waStatus, setWaStatus] = useState<any>({ isConnected: false, connectionState: "offline", qr: null, groups: [], activeGroupId: null });
+  const [isSavingGroup, setIsSavingGroup] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,8 +44,8 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
     if (isAdmin) {
       const checkWA = async () => {
         try {
-          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app';
-          const res = await fetch(`${baseUrl}/api/whatsapp/status`);
+          
+          const res = await fetch(`/api/whatsapp/status`);
           const data = await res.json();
           setWaStatus(data);
         } catch (e) {
@@ -57,9 +58,28 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
     return () => clearInterval(interval);
   }, [isAdmin]);
 
+  
+  const handleSetGroup = async (groupId: string) => {
+    setIsSavingGroup(true);
+    try {
+      const res = await fetch('/api/whatsapp/set-group', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ groupId })
+      });
+      const data = await res.json();
+      if(data.success) {
+        setWaStatus({...waStatus, activeGroupId: data.activeGroupId});
+      }
+    } catch(e) {
+      console.error(e);
+    }
+    setIsSavingGroup(false);
+  };
+
   const handleWaLogout = async () => {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://api.whizpoint.app';
-    await fetch(`${baseUrl}/api/whatsapp/logout`, { method: 'POST' });
+    
+    await fetch(`/api/whatsapp/logout`, { method: 'POST' });
   };
 
   const handleDeleteEvent = async (id: string) => {
@@ -251,23 +271,31 @@ export default function DashboardClient({ user, tickets, adminEvents = [] }: { u
                   </p>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-700">Status:</span>
-                    {waStatus.isConnected ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
-                        <CheckCircle2 className="w-4 h-4" />
-                        Connected
+                    
+                  {waStatus.connectionState === "open" ? (
+                    <div className="space-y-4">
+                      <button onClick={handleWaLogout} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition-colors">
+                        Disconnect
+                      </button>
+                      
+                      <div className="pt-4 border-t border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Admin Notification Group</label>
+                        <select 
+                          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                          value={waStatus.activeGroupId || ''}
+                          onChange={(e) => handleSetGroup(e.target.value)}
+                          disabled={isSavingGroup}
+                        >
+                          <option value="">-- Select a WhatsApp Group --</option>
+                          {waStatus.groups?.map((g: any) => (
+                            <option key={g.id} value={g.id}>{g.name}</option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-gray-500 mt-1">Select the group where tickets will be broadcasted to your admins.</p>
                       </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-700 rounded-full text-sm font-medium">
-                        <XCircle className="w-4 h-4" />
-                        Disconnected
-                      </div>
-                    )}
-                  </div>
-                  {waStatus.isConnected ? (
-                    <button onClick={handleWaLogout} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition-colors">
-                      Disconnect
-                    </button>
+                    </div>
                   ) : (
+
                     <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors opacity-50 cursor-not-allowed">
                       <RefreshCcw className="w-4 h-4" />
                       Waiting for QR...
