@@ -8,15 +8,15 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
   if (session?.role !== 'ADMIN') redirect('/dashboard');
   
   const resolvedParams = await params;
-  const events = await sql\SELECT * FROM events WHERE id = \\;
+  const events = await sql`SELECT * FROM events WHERE id = ${resolvedParams.id}`;
   if (!events.length) redirect('/dashboard');
   
-  const packages = await sql\SELECT * FROM ticket_packages WHERE event_id = \\;
+  const packages = await sql`SELECT * FROM ticket_packages WHERE event_id = ${resolvedParams.id}`;
   
   // Calculate remaining for each package
   const enrichedPackages = [];
   for (const pkg of packages) {
-    const soldRes = await sql\SELECT COUNT(*) as count FROM tickets WHERE package_id = \ AND status IN ('ACTIVE', 'SUCCESS', 'PENDING')\;
+    const soldRes = await sql`SELECT COUNT(*) as count FROM tickets WHERE package_id = ${pkg.id} AND status IN ('ACTIVE', 'SUCCESS', 'PENDING')`;
     const sold = parseInt(soldRes[0].count);
     enrichedPackages.push({ ...pkg, sold, remaining: pkg.capacity - sold });
   }

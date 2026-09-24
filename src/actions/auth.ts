@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 async function sendOTPWhatsApp(phone: string, otp: string) {
   const formattedPhone = phone.startsWith('+') ? phone.slice(1) : phone;
   const message = `*FlashPass Verification*\n\nYour OTP code is: *${otp}*\n\nDo not share this code with anyone.`;
+  try {
     const waServiceUrl = process.env.WHATSAPP_SERVICE_URL || 'https://api.whizpoint.app';
     const waApiKey = process.env.WHATSAPP_SERVICE_API_KEY || ''; 
     const headers: any = { 'Content-Type': 'application/json' };
