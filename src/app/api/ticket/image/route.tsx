@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
             >
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <img 
-                  src={`${appUrl}/logo.png`} 
+                  src={`${appUrl}/logo.png?v=2`} 
                   style={{ width: '132px', height: '132px', borderRadius: '66px', border: '4px solid #3b82f6', marginRight: '30px' }} 
                 />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
