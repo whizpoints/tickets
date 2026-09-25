@@ -260,7 +260,7 @@ export default function DashboardClient({ user, tickets = [], adminEvents = [], 
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">Dashboard Overview</h2>
               <Link 
-                href="/admin/events/new" 
+                href="/events/new" 
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20"
               >
                 <Ticket className="w-4 h-4" />
