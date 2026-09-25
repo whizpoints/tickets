@@ -20,7 +20,7 @@ import {
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 
-export default function DashboardClient({ user, tickets = [], adminEvents = [], adminStats = {revenue:0, sold:0, active:0}, availableEvents = [] }: { user: any, tickets: any[], adminEvents?: any[], adminStats?: any, availableEvents?: any[] }) {
+export default function DashboardClient({ user, tickets = [], adminEvents = [], adminStats = {revenue:0, sold:0, active:0}, availableEvents = [], myEvents = [] }: { user: any, tickets: any[], adminEvents?: any[], adminStats?: any, availableEvents?: any[], myEvents?: any[] }) {
   const [isAdmin, setIsAdmin] = useState(user?.role === "ADMIN");
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const [waStatus, setWaStatus] = useState<any>({ isConnected: false, connectionState: "offline", qr: null, groups: [], activeGroupId: null });
@@ -180,6 +180,39 @@ export default function DashboardClient({ user, tickets = [], adminEvents = [], 
               </div>
             </div>
 
+            {/* My Hosted Events Section */}
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">My Hosted Events</h2>
+                <Link href="/events/new" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+                  <Calendar className="w-4 h-4" />
+                  Post an Event
+                </Link>
+              </div>
+              <div className="space-y-4">
+                {myEvents.length === 0 ? (
+                  <p className="text-gray-500 py-6 bg-white rounded-2xl text-center border border-gray-100">You haven't posted any events yet.</p>
+                ) : (
+                  myEvents.map(event => (
+                    <div key={event.id} className="flex items-center justify-between p-5 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-gray-200 transition-colors">
+                      <div>
+                        <h4 className="font-semibold text-gray-900 text-lg">{event.title}</h4>
+                        <p className="text-sm text-gray-500">{new Date(event.date).toLocaleDateString()} &bull; {event.location}</p>
+                      </div>
+                      <div className="flex gap-3">
+                        <Link 
+                          href={`/events/${event.id}/edit`}
+                          className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors"
+                        >
+                          Manage Tickets
+                        </Link>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
             {/* Browse Upcoming Events Section */}
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -281,7 +314,7 @@ export default function DashboardClient({ user, tickets = [], adminEvents = [], 
                       </div>
                       <div className="flex gap-2">
                         <Link 
-                          href={`/admin/events/${event.id}/edit`}
+                          href={`/events/${event.id}/edit`}
                           className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
                         >
                           Edit Tickets

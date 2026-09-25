@@ -4,8 +4,12 @@ import { sql } from "@/lib/neon";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { randomUUID } from "crypto";
+import { getSession } from "@/lib/session";
 
 export async function createEvent(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const dateStr = formData.get("date") as string;
@@ -21,12 +25,13 @@ export async function createEvent(formData: FormData) {
   const eventDate = new Date(`${dateStr}T${timeStr || '00:00'}:00`).toISOString();
   
   const eventId = randomUUID();
+  const organizerName = session.role === 'ADMIN' ? 'FlashPass Admin' : session.email;
 
   try {
     // Insert event
     await sql`
-      INSERT INTO events (id, title, description, date, venue, location, image_url, organizer)
-      VALUES (${eventId}, ${title}, ${description}, ${eventDate}, ${venue}, ${location}, ${coverImage}, 'FlashPass Admin')
+      INSERT INTO events (id, title, description, date, venue, location, image_url, organizer, user_id)
+      VALUES (${eventId}, ${title}, ${description}, ${eventDate}, ${venue}, ${location}, ${coverImage}, ${organizerName}, ${session.userId})
     `;
 
     // Insert ticket packages
@@ -51,6 +56,15 @@ export async function createEvent(formData: FormData) {
 }
 
 export async function deleteEvent(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  
+  const events = await sql`SELECT user_id FROM events WHERE id = ${id}`;
+  if (!events.length) throw new Error("Not found");
+  if (session.role !== 'ADMIN' && events[0].user_id !== session.userId) {
+    throw new Error("Forbidden");
+  }
+
   try {
     await sql`DELETE FROM events WHERE id = ${id}`;
   } catch (error) {
@@ -69,12 +83,36 @@ export async function getEventPackages(eventId: string) {
 }
 
 export async function updatePackage(pkgId: string, capacity: number) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  
+  // Verify ownership
+  const pkgs = await sql`
+    SELECT e.user_id 
+    FROM ticket_packages p 
+    JOIN events e ON p.event_id = e.id 
+    WHERE p.id = ${pkgId}
+  `;
+  if (!pkgs.length) throw new Error("Not found");
+  if (session.role !== 'ADMIN' && pkgs[0].user_id !== session.userId) {
+    throw new Error("Forbidden");
+  }
+
   await sql`UPDATE ticket_packages SET capacity = ${capacity} WHERE id = ${pkgId}`;
   revalidatePath("/events");
   revalidatePath("/dashboard");
 }
 
 export async function updateEventDetails(id: string, formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  
+  const events = await sql`SELECT user_id FROM events WHERE id = ${id}`;
+  if (!events.length) throw new Error("Not found");
+  if (session.role !== 'ADMIN' && events[0].user_id !== session.userId) {
+    throw new Error("Forbidden");
+  }
+
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const dateStr = formData.get("date") as string;

@@ -36,6 +36,7 @@ export default async function DashboardServerPage() {
 
   let adminEvents: any[] = [];
   let availableEvents: any[] = [];
+  let myEvents: any[] = [];
   let adminStats = { revenue: 0, sold: 0, active: 0 };
   
   if (fullUser.role === "ADMIN") {
@@ -73,10 +74,17 @@ export default async function DashboardServerPage() {
         ORDER BY date ASC
         LIMIT 6
       `;
+
+      myEvents = await sql`
+        SELECT id, title, date, location 
+        FROM events 
+        WHERE user_id = ${session.userId}
+        ORDER BY created_at DESC
+      `;
     } catch(e) {
       console.error(e);
     }
   }
 
-  return <DashboardClient user={fullUser} tickets={tickets || []} adminEvents={adminEvents || []} adminStats={adminStats} availableEvents={availableEvents || []} />;
+  return <DashboardClient user={fullUser} tickets={tickets || []} adminEvents={adminEvents || []} adminStats={adminStats} availableEvents={availableEvents || []} myEvents={myEvents || []} />;
 }
